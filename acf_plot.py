@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from matplotlib.pylab import rcParams
 from pandas.plotting import autocorrelation_plot
 
-def plotacf(data):
+def plotacf(data,parameter,show=True,save=False):
 	#Set figure parameters
 	rcParams['figure.figsize'] = 18, 9
 	rcParams['figure.dpi'] = 200
@@ -13,11 +13,19 @@ def plotacf(data):
 	ax1.set_xlabel('Date')
 	####
 	lns1 = ax1.plot(data.index.values, data.values, color=color,label='Sales')#Plot sales data
-	#Show and save plot
-	pyl.show()
-	#pyl.savefig('Sales.png')
-	#Plot acf
+	if show:
+		pyl.show()
+	if save:
+		pyl.savefig(parameter+'.png')
+	#Calculate and plot acf
 	plt.figure()
 	autocorrelation_plot(data)
-	plt.show()
-	#plt.savefig('Correlation.png')
+	if show:
+		plt.show()
+	if save:
+		plt.savefig(parameter+'_Correlation.png')
+	
+	
+
+	
+		

@@ -21,4 +21,5 @@ monthlySales = dailySales.resample('M').mean()
 #print(weeklySales.values)
 #print(monthlySales.index)
 
-ap.plotacf(weeklySales)
+ap.plotacf(weeklySales,'WeeklySales',show=False,save=True)
+ap.plotacf(weeklySales,'MonthlylySales',show=False,save=True)

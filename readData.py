@@ -1,11 +1,6 @@
 import pandas as pd
-import matplotlib.pylab as pyl
-import matplotlib.pyplot as plt
-from matplotlib.pylab import rcParams
-from pandas.plotting import autocorrelation_plot
 import acf_plot as ap
 
-ndays = [31,28,31,30,31,30,31,31,30,31,30,31]
 dateParser = lambda x: pd.datetime.strptime(x,'%d-%m-%Y') if pd.notna(x) else nan
 salesData = pd.read_excel('total12345.xls',skiprows = [0], usecols = ['date','maxtemp','mdsetotal'], parse_dates=['date'],date_parser=dateParser)#Read data from file
 salesData.dropna(how = 'all',inplace = True)#Drop all empty rows

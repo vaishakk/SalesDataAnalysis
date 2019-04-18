@@ -24,8 +24,3 @@ def plotacf(data,parameter,show=True,save=False):
 		plt.show()
 	if save:
 		plt.savefig(parameter+'_Correlation.png')
-	
-	
-
-	
-		

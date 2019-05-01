@@ -1,7 +1,7 @@
-import pandas as pd
-import acf_plot as ap
-from pmdarima.arima.auto import auto_arima
 import matplotlib.pyplot as plt
+import pandas as pd
+from pmdarima.arima.auto import auto_arima
+import statsmodels.api as sm
 from statsmodels.tsa.seasonal import seasonal_decompose
 
 dateParser = lambda x: pd.datetime.strptime(x,'%d-%m-%Y') if pd.notna(x) else nan
@@ -31,10 +31,39 @@ plt.savefig('SeasonalDecompose.png')
 #ap.plotacf(monthlySales,'MonthlylySales',show=False,save=True)
 
 stepwise_model = auto_arima(dailySales, start_p=1, start_q=1,
-                           max_p=3, max_q=3, m=12,
+                           max_p=3, max_q=3, m=7,
                            start_P=0, seasonal=True,
-                           d=1, D=1, trace=True,
+                           d=1, D=1, trace=False,
                            error_action='ignore',  
                            suppress_warnings=True, 
                            stepwise=True)
-print(stepwise_model.aic())
+#print(stepwise_model.aic())
+#print(stepwise_model.order)
+#print(stepwise_model.seasonal_order)
+
+model = sm.tsa.statespace.SARIMAX(dailySales,
+                                order=stepwise_model.order,
+                                seasonal_order=stepwise_model.seasonal_order,
+                                enforce_stationarity=False,
+                                enforce_invertibility=False)
+
+results = model.fit()
+
+#print(results.summary().tables[1])
+
+pred = results.get_prediction(start=pd.to_datetime('2017-01-01'), dynamic=False)
+pred_ci = pred.conf_int()
+print(pred_ci)
+plt.figure()
+ax = dailySales['2016':].plot(label='observed')
+pred.predicted_mean.plot(ax=ax, label='One-step ahead Forecast', alpha=.7, figsize=(14, 7))
+
+ax.fill_between(pred_ci.index,
+                pred_ci.iloc[:, 0],
+                pred_ci.iloc[:, 1], color='k', alpha=.2)
+
+ax.set_xlabel('Date')
+ax.set_ylabel('Sales')
+plt.legend()
+plt.savefig('Forecast.png')
+plt.show()
